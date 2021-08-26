@@ -57,11 +57,20 @@ type DiscriminatorType<
     >
   : never;
 
-// Taken straight from superstruct
-//
-// TODO: Improve this so we JSON.stringify objects
+// This is a slight tweak on what superstruct does because printing "[Object
+// object]" is rarely useful.
 function print(value: any): string {
-  return typeof value === 'string' ? JSON.stringify(value) : `${value}`;
+  // If the value is a string we use JSON.stringify for the quotes.
+  //
+  // For objects we use JSON.stringify as a cheap pretty-print function unless
+  // the object includes its own toString() method.
+  if (
+    typeof value === 'string' ||
+    (typeof value === 'object' && value.toString === Object.prototype.toString)
+  ) {
+    return JSON.stringify(value);
+  }
+  return `${value}`;
 }
 
 function isObject(a: unknown): a is Record<string, any> {

@@ -40,7 +40,7 @@ describe('discriminator', () => {
     assert(error instanceof s.StructError);
     assert.strictEqual(
       error.message,
-      "Expected an object with 'kind' property, but received: [object Object]"
+      'Expected an object with \'kind\' property, but received: {"c":3}'
     );
   });
 
@@ -133,7 +133,7 @@ describe('discriminator', () => {
     assert(error instanceof s.StructError);
     assert.strictEqual(
       error.message,
-      "Expected an object with 'status' property, but received: [object Object]"
+      'Expected an object with \'status\' property, but received: {"kind":"b","code":"error"}'
     );
   });
 
