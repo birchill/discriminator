@@ -2,6 +2,13 @@
   "name": "@birchill/discriminator",
   "version": "0.1.0",
   "description": "A tagged union type for superstruct based on JSON typedef's discriminator type",
+  "keywords": [
+    "superstruct",
+    "tagged union",
+    "discriminated union",
+    "sum type",
+    "JSON typedef"
+  ],
   "repository": "https://github.com/birchill/discriminator.git",
   "author": "Birchill, Inc.",
   "license": "MIT",
