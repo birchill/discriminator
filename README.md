@@ -19,6 +19,7 @@ const schema = discriminator('eventType', {
 });
 
 type SchemaType = Infer<typeof schema>;
+
 // SchemaType =
 // {
 //   eventType: "USER_CREATED";
