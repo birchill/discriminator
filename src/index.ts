@@ -1,9 +1,72 @@
 import * as s from 'superstruct';
 
-type DiscriminatorSchema<
+type ObjectSchema = Record<string, s.Struct<any, any>>;
+
+export type DiscriminatorSchema<
   FieldType extends string,
   MappingType extends Record<string, s.Struct<any, any>>
 > = { field: FieldType; mapping: MappingType };
+
+// Similar to assign() but only takes two arguments and if the first argument
+// is a discriminator(), it merges the properties of an object() or type()
+// into the discriminator()'s various branches.
+//
+// Needed for supporting nested discriminator() types.
+function extend<
+  A extends
+    | ObjectSchema
+    | DiscriminatorSchema<any, Record<string, s.Struct<any, any>>>,
+  B extends ObjectSchema
+>(a: s.Struct<any, A>, b: s.Struct<any, B>): s.Struct<any, any> {
+  if (a.type === 'discriminator') {
+    const discriminatorSchema = a.schema as DiscriminatorSchema<
+      any,
+      Record<string, s.Struct<any, any>>
+    >;
+    const mapping: Record<string, s.Struct<any, any>> = {};
+    for (const [key, value] of Object.entries(discriminatorSchema.mapping)) {
+      mapping[key] = s.assign(value, b);
+    }
+    return discriminator(a.schema.field, mapping);
+  }
+
+  return s.assign(a as s.Struct<any, ObjectSchema>, b);
+}
+
+// Infer support for discriminator() objects
+
+type ConvertToUnion<T> = T[keyof T];
+
+type Flatten<T> = T extends object
+  ? {
+      [P in keyof T]: Flatten<T[P]>;
+    }
+  : T;
+
+type DiscriminatorType<
+  FieldType extends string,
+  MappingType
+> = MappingType extends Record<string, any>
+  ? Flatten<
+      ConvertToUnion<
+        {
+          [K in keyof MappingType]: { [P in FieldType]: K } &
+            s.Infer<MappingType[K]>;
+        }
+      >
+    >
+  : never;
+
+// Taken straight from superstruct
+//
+// TODO: Improve this so we JSON.stringify objects
+function print(value: any): string {
+  return typeof value === 'string' ? JSON.stringify(value) : `${value}`;
+}
+
+function isObject(a: unknown): a is Record<string, any> {
+  return typeof a === 'object' && a !== null && !Array.isArray(a);
+}
 
 export const discriminator = <
   FieldType extends string,
@@ -72,56 +135,3 @@ export const discriminator = <
     },
   });
 };
-
-type ObjectSchema = Record<string, s.Struct<any, any>>;
-
-function extend<
-  A extends
-    | ObjectSchema
-    | DiscriminatorSchema<any, Record<string, s.Struct<any, any>>>,
-  B extends ObjectSchema
->(a: s.Struct<any, A>, b: s.Struct<any, B>): s.Struct<any, any> {
-  if (a.type === 'discriminator') {
-    const discriminatorSchema = a.schema as DiscriminatorSchema<
-      any,
-      Record<string, s.Struct<any, any>>
-    >;
-    const mapping: Record<string, s.Struct<any, any>> = {};
-    for (const [key, value] of Object.entries(discriminatorSchema.mapping)) {
-      mapping[key] = s.assign(value, b);
-    }
-    return discriminator(a.schema.field, mapping);
-  }
-
-  return s.assign(a as s.Struct<any, ObjectSchema>, b);
-}
-
-type ConvertToUnion<T> = T[keyof T];
-
-type DiscriminatorInnerType<field extends string, T> = T extends Record<
-  string,
-  any
->
-  ? ConvertToUnion<{ [K in keyof T]: { [P in field]: K } & s.Infer<T[K]> }>
-  : never;
-
-type Flatten<T> = T extends object
-  ? {
-      [P in keyof T]: Flatten<T[P]>;
-    }
-  : T;
-
-type DiscriminatorType<field extends string, T> = Flatten<
-  DiscriminatorInnerType<field, T>
->;
-
-// Taken straight from superstruct
-//
-// TODO: Improve this so we JSON.stringify objects
-function print(value: any): string {
-  return typeof value === 'string' ? JSON.stringify(value) : `${value}`;
-}
-
-function isObject(a: unknown): a is Record<string, any> {
-  return typeof a === 'object' && a !== null && !Array.isArray(a);
-}
