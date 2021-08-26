@@ -9,8 +9,6 @@ type.
 import { boolean, Infer, enums, string, object } from 'superstruct';
 import { discriminator } from '@birchill/discriminator';
 
-// Based on the example at
-// https://jsontypedef.com/docs/jtd-in-5-minutes/#discriminator-schemas
 const schema = discriminator('eventType', {
   USER_CREATED: object({ id: string() }),
   USER_PAYMENT_PLAN_CHANGED: object({
@@ -41,13 +39,13 @@ type SchemaType = Infer<typeof schema>;
 - If you try to model the above using `union()` objects and validation fails you
   get errors like:
 
-  ` Expected the value to satisfy a union of ``object | object | object``, but received: [object Object] `.
+  ` Expected the value to satisfy a union of ``object | object | object``, but received: [object Object]`.
 
   Using `discriminator()` you get errors like:
 
-  `At path: value.name -- Expected a string with a length between `0`and`256` but received one with a length of ``257```.
+  ` At path: value.name -- Expected a string with a length between ``0``and ``256`` but received one with a length of ``257``  `.
 
-- Better semantics
+- Better semantics.
 - Easier translation to and from [JSON typedef](https://jsontypedef.com/) should
   that be useful.
 
@@ -55,13 +53,14 @@ type SchemaType = Infer<typeof schema>;
 
 `discriminator()` takes two parameters:
 
-1. A string representing the tagged union's tag field
-2. An object where the keys are the tag values and the values are `object()` or
-   `type()` structs.
+1. A string representing the tagged union's tag field.
+2. An object where the keys are the tag values and the values are `object()`,
+   `type()`, or `discriminator()` structs.
 
-If you need to model a branch where there are no parameters just use an empty
-`object()` or `type()`. This is important because you're clarifying if that
-branch is allowed to have extra values on it (`type()`) or not (`object()`).
+If you need to model a branch where there are no other properties just use an
+empty `object()` or `type()`.
+This is important because you're indicating whether or not that branch is
+allowed to have extra values on it (`type()`) or not (`object()`).
 
 e.g.
 
@@ -90,7 +89,7 @@ discriminator('result', {
   }),
 });
 
-// Infer here produces the type:
+// `Infer` here produces the type:
 //
 // {
 //   result: "success";
@@ -107,4 +106,24 @@ discriminator('result', {
 // }
 ```
 
-## Contributing
+## Developing
+
+### Building
+
+```
+yarn build
+```
+
+### Testing
+
+```
+yarn test
+```
+
+### Releasing
+
+```
+yarn release
+git push --follow-tags
+yarn publish
+```
