@@ -1,15 +1,18 @@
 import * as s from 'superstruct';
 
-const FIELD_NAME = Symbol('field-name');
+type DiscriminatorSchema<
+  FieldType extends string,
+  MappingType extends Record<string, s.Struct<any, any>>
+> = { field: FieldType; mapping: MappingType };
 
 export const discriminator = <
-  S extends Record<string, s.Struct<any, any>>,
-  FieldType extends string
+  FieldType extends string,
+  MappingType extends Record<string, s.Struct<any, any>>
 >(
   field: FieldType,
-  schema: S
+  mapping: MappingType
 ) => {
-  const keys = Object.keys(schema);
+  const keys = Object.keys(mapping);
 
   const getStructForValue = (
     value: unknown
@@ -23,7 +26,7 @@ export const discriminator = <
     }
 
     const branch = value[field];
-    const branchStruct = schema[branch];
+    const branchStruct = mapping[branch];
     if (!branchStruct) {
       return undefined;
     }
@@ -31,9 +34,12 @@ export const discriminator = <
     return extend(branchStruct, s.object({ [field]: s.literal(branch) }));
   };
 
-  return new s.Struct<DiscriminatorType<S, FieldType>>({
+  return new s.Struct<
+    DiscriminatorType<FieldType, MappingType>,
+    DiscriminatorSchema<FieldType, MappingType>
+  >({
     type: 'discriminator',
-    schema: { ...schema, [FIELD_NAME]: field },
+    schema: { field, mapping },
     *entries(value: unknown, context: s.Context) {
       const struct = getStructForValue(value);
       if (struct) {
@@ -69,24 +75,30 @@ export const discriminator = <
 
 type ObjectSchema = Record<string, s.Struct<any, any>>;
 
-function extend<A extends ObjectSchema, B extends ObjectSchema>(
-  a: s.Struct<any, A>,
-  b: s.Struct<any, B>
-): s.Struct<any, any> {
+function extend<
+  A extends
+    | ObjectSchema
+    | DiscriminatorSchema<any, Record<string, s.Struct<any, any>>>,
+  B extends ObjectSchema
+>(a: s.Struct<any, A>, b: s.Struct<any, B>): s.Struct<any, any> {
   if (a.type === 'discriminator') {
-    const schema: Record<string, s.Struct<any, any>> = {};
-    for (const [key, value] of Object.entries(a.schema)) {
-      schema[key] = s.assign(value, b);
+    const discriminatorSchema = a.schema as DiscriminatorSchema<
+      any,
+      Record<string, s.Struct<any, any>>
+    >;
+    const mapping: Record<string, s.Struct<any, any>> = {};
+    for (const [key, value] of Object.entries(discriminatorSchema.mapping)) {
+      mapping[key] = s.assign(value, b);
     }
-    return discriminator((a.schema as any)[FIELD_NAME], schema);
+    return discriminator(a.schema.field, mapping);
   }
 
-  return s.assign(a, b);
+  return s.assign(a as s.Struct<any, ObjectSchema>, b);
 }
 
 type ConvertToUnion<T> = T[keyof T];
 
-type DiscriminatorInnerType<T, field extends string> = T extends Record<
+type DiscriminatorInnerType<field extends string, T> = T extends Record<
   string,
   any
 >
@@ -99,8 +111,8 @@ type Flatten<T> = T extends object
     }
   : T;
 
-type DiscriminatorType<T, field extends string> = Flatten<
-  DiscriminatorInnerType<T, field>
+type DiscriminatorType<field extends string, T> = Flatten<
+  DiscriminatorInnerType<field, T>
 >;
 
 // Taken straight from superstruct
