@@ -1,5 +1,5 @@
-import assert from 'assert';
 import * as s from 'superstruct';
+import { describe, expect, it } from 'vitest';
 
 import { discriminator } from './';
 
@@ -10,8 +10,8 @@ describe('discriminator', () => {
       b: s.type({ d: s.string() }),
     });
 
-    assert.doesNotThrow(() => s.assert({ kind: 'a', c: 1 }, schema));
-    assert.doesNotThrow(() => s.assert({ kind: 'b', d: 'abc' }, schema));
+    expect(() => s.assert({ kind: 'a', c: 1 }, schema)).not.toThrow();
+    expect(() => s.assert({ kind: 'b', d: 'abc' }, schema)).not.toThrow();
   });
 
   it('rejects a non-object', () => {
@@ -22,9 +22,8 @@ describe('discriminator', () => {
 
     const [error] = s.validate('test', schema);
 
-    assert(error instanceof s.StructError);
-    assert.strictEqual(
-      error.message,
+    expect(error).toBeInstanceOf(s.StructError);
+    expect((error as s.StructError).message).toBe(
       'Expected an object, but received: "test"'
     );
   });
@@ -37,9 +36,8 @@ describe('discriminator', () => {
 
     const [error] = s.validate({ c: 3 }, schema);
 
-    assert(error instanceof s.StructError);
-    assert.strictEqual(
-      error.message,
+    expect(error).toBeInstanceOf(s.StructError);
+    expect((error as s.StructError).message).toBe(
       'Expected an object with \'kind\' property, but received: {"c":3}'
     );
   });
@@ -52,9 +50,8 @@ describe('discriminator', () => {
 
     const [error] = s.validate({ kind: 'c', e: 3 }, schema);
 
-    assert(error instanceof s.StructError);
-    assert.strictEqual(
-      error.message,
+    expect(error).toBeInstanceOf(s.StructError);
+    expect((error as s.StructError).message).toBe(
       "Expected 'kind' to be one of 'a', 'b', but received: 'c'"
     );
   });
@@ -67,9 +64,8 @@ describe('discriminator', () => {
 
     const [error] = s.validate({ kind: 'a', c: 'test' }, schema);
 
-    assert(error instanceof s.StructError);
-    assert.strictEqual(
-      error.message,
+    expect(error).toBeInstanceOf(s.StructError);
+    expect((error as s.StructError).message).toBe(
       'At path: c -- Expected a number, but received: "test"'
     );
   });
@@ -80,7 +76,7 @@ describe('discriminator', () => {
       error: s.object({ code: s.string() }),
     });
 
-    assert.doesNotThrow(() => s.assert({ status: 'success' }, schema));
+    expect(() => s.assert({ status: 'success' }, schema)).not.toThrow();
   });
 
   it('validates an object against a nested schema', () => {
@@ -92,13 +88,13 @@ describe('discriminator', () => {
       }),
     });
 
-    assert.doesNotThrow(() => s.assert({ kind: 'a', c: 1 }, schema));
-    assert.doesNotThrow(() =>
+    expect(() => s.assert({ kind: 'a', c: 1 }, schema)).not.toThrow();
+    expect(() =>
       s.assert({ kind: 'b', status: 'success' }, schema)
-    );
-    assert.doesNotThrow(() =>
+    ).not.toThrow();
+    expect(() =>
       s.assert({ kind: 'b', status: 'failure', code: 'error' }, schema)
-    );
+    ).not.toThrow();
   });
 
   it('rejects a non-object using a nested schema', () => {
@@ -112,9 +108,8 @@ describe('discriminator', () => {
 
     const [error] = s.validate('test', schema);
 
-    assert(error instanceof s.StructError);
-    assert.strictEqual(
-      error.message,
+    expect(error).toBeInstanceOf(s.StructError);
+    expect((error as s.StructError).message).toBe(
       'Expected an object, but received: "test"'
     );
   });
@@ -130,9 +125,8 @@ describe('discriminator', () => {
 
     const [error] = s.validate({ kind: 'b', code: 'error' }, schema);
 
-    assert(error instanceof s.StructError);
-    assert.strictEqual(
-      error.message,
+    expect(error).toBeInstanceOf(s.StructError);
+    expect((error as s.StructError).message).toBe(
       'Expected an object with \'status\' property, but received: {"kind":"b","code":"error"}'
     );
   });
@@ -148,9 +142,8 @@ describe('discriminator', () => {
 
     const [error] = s.validate({ kind: 'b', status: 'unknown' }, schema);
 
-    assert(error instanceof s.StructError);
-    assert.strictEqual(
-      error.message,
+    expect(error).toBeInstanceOf(s.StructError);
+    expect((error as s.StructError).message).toBe(
       "Expected 'status' to be one of 'success', 'failure', but received: 'unknown'"
     );
   });
@@ -169,9 +162,8 @@ describe('discriminator', () => {
       schema
     );
 
-    assert(error instanceof s.StructError);
-    assert.strictEqual(
-      error.message,
+    expect(error).toBeInstanceOf(s.StructError);
+    expect((error as s.StructError).message).toBe(
       'At path: code -- Expected a string, but received: 123'
     );
   });
