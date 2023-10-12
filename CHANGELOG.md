@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/birchill/discriminator/compare/v0.2.0...v0.3.0) (2023-10-12)
+
+
+### Bug Fixes
+
+* switch to tsup and fix package exports ([9198501](https://github.com/birchill/discriminator/commit/91985018198b4093c5bb1baac886df6cc86917eb))
+
 ## [0.2.0](https://github.com/birchill/discriminator/compare/v0.1.0...v0.2.0) (2022-09-20)
 
 
