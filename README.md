@@ -124,7 +124,5 @@ yarn test
 ### Releasing
 
 ```
-yarn release
-git push --follow-tags
-yarn publish
+yarn release-it
 ```

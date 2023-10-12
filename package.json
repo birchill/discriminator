@@ -33,11 +33,11 @@
   },
   "scripts": {
     "build": "tsup",
+    "test": "vitest run",
     "prepublishOnly": "pinst --disable && tsup",
-    "postinstall": "husky install",
     "postpublish": "pinst --enable",
-    "release": "standard-version",
-    "test": "vitest run"
+    "postinstall": "husky install",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.{js,ts,md}": [
@@ -50,11 +50,12 @@
     "bracketSpacing": true
   },
   "devDependencies": {
+    "@release-it/conventional-changelog": "7.0.2",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.1",
     "pinst": "^3.0.0",
     "prettier": "^3.0.3",
-    "standard-version": "^9.5.0",
+    "release-it": "16.2.1",
     "superstruct": "^1.0.3",
     "tsup": "7.2.0",
     "typescript": "^5.2.2",
@@ -62,6 +63,6 @@
     "vitest-github-actions-reporter": "0.10.0"
   },
   "peerDependencies": {
-    "superstruct": ">0.16.0 < 2.0.0"
+    "superstruct": ">0.16.0 <2.0.0"
   }
 }
