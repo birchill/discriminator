@@ -15,6 +15,9 @@
   "bugs": {
     "url": "https://github.com/birchill/discriminator/issues"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "files": [
     "dist"
   ],
