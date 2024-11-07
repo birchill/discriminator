@@ -1,6 +1,6 @@
 {
   "name": "@birchill/discriminator",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A tagged union type for superstruct based on JSON typedef's discriminator type",
   "keywords": [
     "superstruct",
