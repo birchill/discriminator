@@ -53,16 +53,16 @@
     "bracketSpacing": true
   },
   "devDependencies": {
-    "@release-it/conventional-changelog": "8.0.1",
-    "husky": "9.0.7",
-    "lint-staged": "15.2.0",
+    "@release-it/conventional-changelog": "9.0.2",
+    "husky": "9.1.6",
+    "lint-staged": "15.2.10",
     "pinst": "3.0.0",
-    "prettier": "3.2.4",
-    "release-it": "17.0.3",
+    "prettier": "3.3.3",
+    "release-it": "17.10.0",
     "superstruct": "1.0.3",
-    "tsup": "8.0.1",
-    "typescript": "5.3.3",
-    "vitest": "1.2.2",
+    "tsup": "8.3.5",
+    "typescript": "5.6.3",
+    "vitest": "2.1.4",
     "vitest-github-actions-reporter": "0.11.1"
   },
   "peerDependencies": {
