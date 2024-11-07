@@ -44,7 +44,7 @@ type SchemaType = Infer<typeof schema>;
 
   Using `discriminator()` you get errors like:
 
-  ` At path: value.name -- Expected a string with a length between ``0``and ``256`` but received one with a length of ``257``  `.
+  `At path: value.name -- Expected a string with a length between ``0``and ``256`` but received one with a length of ``257`` `.
 
 - Better semantics.
 - Easier translation to and from [JSON typedef](https://jsontypedef.com/) should
@@ -112,17 +112,17 @@ discriminator('result', {
 ### Building
 
 ```
-yarn build
+pnpm build
 ```
 
 ### Testing
 
 ```
-yarn test
+pnpm test
 ```
 
 ### Releasing
 
 ```
-yarn release-it
+pnpm release-it
 ```
