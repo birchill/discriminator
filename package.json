@@ -42,11 +42,6 @@
     "postinstall": "husky",
     "prepare": "husky"
   },
-  "lint-staged": {
-    "*.{js,ts,md}": [
-      "prettier --write"
-    ]
-  },
   "prettier": {
     "singleQuote": true,
     "trailingComma": "es5",
@@ -55,7 +50,7 @@
   "devDependencies": {
     "@release-it/conventional-changelog": "9.0.2",
     "husky": "9.1.6",
-    "lint-staged": "15.2.10",
+    "nano-staged": "1.0.2",
     "pinst": "3.0.0",
     "prettier": "3.3.3",
     "release-it": "17.10.0",
